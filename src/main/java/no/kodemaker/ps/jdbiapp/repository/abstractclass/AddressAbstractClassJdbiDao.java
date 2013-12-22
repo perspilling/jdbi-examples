@@ -1,6 +1,9 @@
-package no.kodemaker.ps.jdbiapp.repository;
+package no.kodemaker.ps.jdbiapp.repository.abstractclass;
 
 import no.kodemaker.ps.jdbiapp.domain.Address;
+import no.kodemaker.ps.jdbiapp.repository.AddressDao;
+import no.kodemaker.ps.jdbiapp.repository.AddressMapper;
+import no.kodemaker.ps.jdbiapp.repository.ExistsMapper;
 import org.skife.jdbi.v2.sqlobject.*;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 
@@ -10,12 +13,14 @@ import java.util.List;
  * @author Per Spilling
  */
 @RegisterMapper(AddressMapper.class)
-public abstract class AddressDaoJdbi2 {
+public abstract class AddressAbstractClassJdbiDao implements AddressDao {
 
-    public boolean exists(Long id) {
-        return get(id) != null;
-    }
+    @Override
+    @SqlQuery("select * from ADDRESS where addressId = :id")
+    @RegisterMapper(ExistsMapper.class)
+    public abstract boolean exists(@Bind("id") Long id);
 
+    @Override
     @Transaction
     public Address save(Address address) {
         if (address.getId() == null) {
@@ -27,20 +32,26 @@ public abstract class AddressDaoJdbi2 {
         }
     }
 
+    @Override
     @SqlQuery("select * from ADDRESS")
     public abstract List<Address> getAll();
 
+    @Override
     @SqlQuery("select * from ADDRESS where addressId = :id")
-    public abstract Address get(@Bind("id") long id);
+    public abstract Address get(@Bind("id") Long id);
 
     @SqlUpdate("insert into ADDRESS (streetAddress, postalCode, postalPlace) values (:a.streetAddress, :a.postalCode, :a.postalPlace)")
+    @Transaction
     @GetGeneratedKeys
     public abstract Long insert(@BindBean("a") Address address);
 
     @SqlUpdate("update ADDRESS set streetAddress = :a.streetAddress, postalCode = :a.postalCode, postalPlace = :a.postalPlace where addressId = :a.id")
+    @Transaction
     @GetGeneratedKeys
     public abstract Long update(@BindBean("a") Address address);
 
+    @Override
+    @Transaction
     @SqlUpdate("delete from ADDRESS where addressId = :id")
     public abstract void delete(@Bind("id") Long id);
 }

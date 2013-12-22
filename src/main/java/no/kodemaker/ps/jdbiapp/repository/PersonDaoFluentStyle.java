@@ -1,6 +1,7 @@
 package no.kodemaker.ps.jdbiapp.repository;
 
 import no.kodemaker.ps.jdbiapp.domain.Person;
+import no.kodemaker.ps.jdbiapp.repository.innerclass.PersonInnerClassJdbiDao;
 import no.kodemaker.ps.jdbiapp.repository.jdbi.TableCreator;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
@@ -16,22 +17,27 @@ import java.util.List;
 public class PersonDaoFluentStyle implements PersonDao, TableCreator {
 
     private DBI dbi;
-    private PersonDaoJdbi personDaoJdbi;
+    private PersonInnerClassJdbiDao personInnerClassJdbiDao;
 
     public PersonDaoFluentStyle(DBI dbi) {
         this.dbi = dbi;
-        this.personDaoJdbi = new PersonDaoJdbi();
+        this.personInnerClassJdbiDao = new PersonInnerClassJdbiDao();
 
+    }
+
+    @Override
+    public void resetTable() {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
     public void createTable() {
-        personDaoJdbi.createTable();
+        personInnerClassJdbiDao.createTable();
     }
 
     @Override
     public void dropTable() {
-        personDaoJdbi.dropTable();
+        personInnerClassJdbiDao.dropTable();
     }
 
     @Override

@@ -1,7 +1,8 @@
-package no.kodemaker.ps.jdbiapp.repository;
+package no.kodemaker.ps.jdbiapp.repository.innerclass;
 
 import no.kodemaker.ps.jdbiapp.domain.Address;
-import no.kodemaker.ps.jdbiapp.repository.jdbi.JdbiHelper;
+import no.kodemaker.ps.jdbiapp.repository.AddressDao;
+import no.kodemaker.ps.jdbiapp.repository.AddressTableCreator;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -12,12 +13,13 @@ import static org.junit.Assert.assertTrue;
 /**
  * @author Per Spilling
  */
-public class AddressDaoJdbiTest {
-    private AddressDaoJdbi dao = new AddressDaoJdbi();
+public class AddressInnerClassJdbiDaoTest {
+    private AddressDao dao;
 
     @Before
     public void init() {
-        new JdbiHelper().resetTable(AddressDaoJdbi.tableName, AddressDaoJdbi.createAddressTableSql_postgres);
+        new AddressTableCreator().resetTable();
+        dao = new AddressInnerClassJdbiDao();
         dao.save(new Address("Storgata 22", "0123", "Oslo"));
         dao.save(new Address("Karl Johans gate 10", "0100", "Oslo"));
     }

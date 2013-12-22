@@ -2,6 +2,7 @@ package no.kodemaker.ps.jdbiapp.repository;
 
 import no.kodemaker.ps.jdbiapp.domain.Person;
 import no.kodemaker.ps.jdbiapp.domain.Team;
+import no.kodemaker.ps.jdbiapp.repository.innerclass.PersonInnerClassJdbiDao;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
 
@@ -14,7 +15,7 @@ import java.sql.SQLException;
  * @author Per Spilling
  */
 public class TeamMapper implements ResultSetMapper<Team> {
-    private PersonDao personDao = new PersonDaoJdbi();
+    private PersonDao personDao = new PersonInnerClassJdbiDao();
 
     public Team map(int index, ResultSet rs, StatementContext ctx) throws SQLException {
         long pocId = rs.getLong("pocPersonId");

@@ -1,8 +1,10 @@
-package no.kodemaker.ps.jdbiapp.repository;
+package no.kodemaker.ps.jdbiapp.repository.innerclass;
 
 import no.kodemaker.ps.jdbiapp.domain.Address;
+import no.kodemaker.ps.jdbiapp.repository.AddressDao;
+import no.kodemaker.ps.jdbiapp.repository.AddressMapper;
+import no.kodemaker.ps.jdbiapp.repository.ExistsMapper;
 import no.kodemaker.ps.jdbiapp.repository.jdbi.JdbiHelper;
-import no.kodemaker.ps.jdbiapp.repository.jdbi.TableCreator;
 import org.skife.jdbi.v2.sqlobject.*;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 import org.skife.jdbi.v2.sqlobject.mixins.Transactional;
@@ -12,33 +14,12 @@ import java.util.List;
 /**
  * @author Per Spilling
  */
-public class AddressDaoJdbi implements AddressDao, TableCreator {
-    public static String tableName = "ADDRESS";
-
-    public static String createAddressTableSql_postgres =
-            "create table ADDRESS (" +
-                    "addressId serial PRIMARY KEY, " +
-                    "streetAddress varchar(50) NOT NULL, " +
-                    "postalCode varchar(8) NOT NULL, " +
-                    "postalPlace varchar(50) NOT NULL)";
+public class AddressInnerClassJdbiDao implements AddressDao {
 
     private AddressDao addressDao;
-    private JdbiHelper jdbiHelper;
 
-
-    public AddressDaoJdbi() {
-        jdbiHelper = new JdbiHelper();
-        addressDao = jdbiHelper.getDBI().onDemand(AddressDao.class);
-    }
-
-    @Override
-    public void createTable() {
-        jdbiHelper.createTableIfNotExist(tableName, createAddressTableSql_postgres);
-    }
-
-    @Override
-    public void dropTable() {
-        jdbiHelper.dropTableIfExist(tableName);
+    public AddressInnerClassJdbiDao() {
+        addressDao = new JdbiHelper().getDBI().onDemand(AddressDao.class);
     }
 
     @Override
@@ -53,7 +34,7 @@ public class AddressDaoJdbi implements AddressDao, TableCreator {
 
     @Override
     public boolean exists(Long id) {
-        return addressDao.get(id) != null;
+        return addressDao.exists(id);
     }
 
     @Override
@@ -74,6 +55,10 @@ public class AddressDaoJdbi implements AddressDao, TableCreator {
 
     @RegisterMapper(AddressMapper.class)
     private interface AddressDao extends Transactional<AddressDao> {
+
+        @SqlQuery("select * from ADDRESS where addressId = :id")
+        @RegisterMapper(ExistsMapper.class)
+        public abstract boolean exists(@Bind("id") Long id);
 
         @SqlUpdate("insert into ADDRESS (streetAddress, postalCode, postalPlace) values (:a.streetAddress, :a.postalCode, :a.postalPlace)")
         @GetGeneratedKeys

@@ -3,6 +3,7 @@ package no.kodemaker.ps.jdbiapp.repository;
 import no.kodemaker.ps.jdbiapp.domain.Email;
 import no.kodemaker.ps.jdbiapp.domain.Person;
 import no.kodemaker.ps.jdbiapp.domain.Team;
+import no.kodemaker.ps.jdbiapp.repository.innerclass.PersonInnerClassJdbiDao;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -16,11 +17,11 @@ import static org.junit.Assert.fail;
  */
 public class TeamDaoTest {
     private static TeamDaoJdbi teamDao;
-    private static PersonDaoJdbi personDao;
+    private static PersonInnerClassJdbiDao personDao;
 
     @BeforeClass
     public static void initDb() {
-        personDao = new PersonDaoJdbi();
+        personDao = new PersonInnerClassJdbiDao();
         personDao.dropTable();
         personDao.createTable();
         DbSeeder.initPersonTable(personDao);

@@ -2,6 +2,7 @@ package no.kodemaker.ps.jdbiapp.repository;
 
 import no.kodemaker.ps.jdbiapp.domain.Person;
 import no.kodemaker.ps.jdbiapp.domain.Team;
+import no.kodemaker.ps.jdbiapp.repository.innerclass.PersonInnerClassJdbiDao;
 import no.kodemaker.ps.jdbiapp.repository.jdbi.JdbiHelper;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
@@ -27,9 +28,14 @@ public class TeamDaoJdbi implements TeamDao {
     // Let DBI manage the db connections
     private TeamDao teamDao = dbi.onDemand(TeamDao.class);
     private TeamPersonDao teamPersonDao = dbi.onDemand(TeamPersonDao.class); // team->person mapping table
-    private PersonDao personDaoJdbi = new PersonDaoJdbi();
+    private PersonDao personDaoJdbi = new PersonInnerClassJdbiDao();
 
     public TeamDaoJdbi() {
+    }
+
+    @Override
+    public void resetTable() {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override

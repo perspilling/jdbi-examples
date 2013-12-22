@@ -3,6 +3,8 @@ package no.kodemaker.ps.jdbiapp.repository;
 import no.kodemaker.ps.jdbiapp.domain.Address;
 import no.kodemaker.ps.jdbiapp.domain.Email;
 import no.kodemaker.ps.jdbiapp.domain.Person;
+import no.kodemaker.ps.jdbiapp.repository.innerclass.AddressInnerClassJdbiDao;
+import no.kodemaker.ps.jdbiapp.repository.innerclass.PersonInnerClassJdbiDao;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -17,8 +19,8 @@ import static org.junit.Assert.*;
  */
 public class PersonDaoJdbiTest {
 
-    private static PersonDaoJdbi personDao = new PersonDaoJdbi();
-    private static AddressDaoJdbi addressDao = new AddressDaoJdbi();
+    private static PersonInnerClassJdbiDao personDao = new PersonInnerClassJdbiDao();
+    private static AddressInnerClassJdbiDao addressDao = new AddressInnerClassJdbiDao();
 
     @BeforeClass
     public static void init() {

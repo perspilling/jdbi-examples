@@ -1,10 +1,13 @@
-package no.kodemaker.ps.jdbiapp.repository;
+package no.kodemaker.ps.jdbiapp.repository.innerclass;
 
 import no.kodemaker.ps.jdbiapp.domain.Address;
 import no.kodemaker.ps.jdbiapp.domain.Person;
+import no.kodemaker.ps.jdbiapp.repository.PersonAddressAssoc;
+import no.kodemaker.ps.jdbiapp.repository.PersonAddressMapper;
+import no.kodemaker.ps.jdbiapp.repository.PersonDao;
+import no.kodemaker.ps.jdbiapp.repository.PersonMapper;
 import no.kodemaker.ps.jdbiapp.repository.jdbi.JdbiHelper;
 import no.kodemaker.ps.jdbiapp.repository.jdbi.SpringDBIFactoryBean;
-import no.kodemaker.ps.jdbiapp.repository.jdbi.TableCreator;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.sqlobject.*;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
@@ -19,19 +22,19 @@ import java.util.List;
  * @author Per Spilling
  */
 @Named
-public class PersonDaoJdbi implements PersonDao, TableCreator {
+public class PersonInnerClassJdbiDao implements PersonDao {
     private PersonDao personDao;
     private PersonAddressDao personAddressDao;
-    private AddressDaoJdbi addressDao;
+    private AddressInnerClassJdbiDao addressDao;
     private JdbiHelper jdbiHelper;
 
-    public PersonDaoJdbi() {
+    public PersonInnerClassJdbiDao() {
         jdbiHelper = new JdbiHelper();
         init(jdbiHelper.getDBI());
     }
 
     // used with Spring
-    public PersonDaoJdbi(SpringDBIFactoryBean dbiFactoryBean) {
+    public PersonInnerClassJdbiDao(SpringDBIFactoryBean dbiFactoryBean) {
         DBI dbi = dbiFactoryBean.getDBI();
         jdbiHelper = new JdbiHelper(dbi);
         init(dbi);
@@ -40,21 +43,19 @@ public class PersonDaoJdbi implements PersonDao, TableCreator {
     private void init(DBI dbi) {
         personDao = dbi.onDemand(PersonDao.class);
         personAddressDao = dbi.onDemand(PersonAddressDao.class);
-        addressDao = new AddressDaoJdbi();
+        addressDao = new AddressInnerClassJdbiDao();
     }
 
-    @Override
     public void createTable() {
         jdbiHelper.createTableIfNotExist(PersonDao.TABLE_NAME, PersonDao.createTableSql_postgres);
-        addressDao.createTable();
+        //addressDao.createTable();
         jdbiHelper.createTableIfNotExist(PersonAddressDao.TABLE_NAME, PersonAddressDao.createTableSql_postgres);
     }
 
-    @Override
     public void dropTable() {
         jdbiHelper.dropTableIfExist(PersonAddressDao.TABLE_NAME);
         jdbiHelper.dropTableIfExist(PersonDao.TABLE_NAME);
-        addressDao.dropTable();
+        //addressDao.dropTable();
     }
 
     /**

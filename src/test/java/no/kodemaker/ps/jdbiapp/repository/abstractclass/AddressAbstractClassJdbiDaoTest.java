@@ -1,6 +1,7 @@
-package no.kodemaker.ps.jdbiapp.repository;
+package no.kodemaker.ps.jdbiapp.repository.abstractclass;
 
 import no.kodemaker.ps.jdbiapp.domain.Address;
+import no.kodemaker.ps.jdbiapp.repository.AddressTableCreator;
 import no.kodemaker.ps.jdbiapp.repository.jdbi.JdbiHelper;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,15 +13,16 @@ import static org.junit.Assert.assertTrue;
 /**
  * @author Per Spilling
  */
-public class AddressDaoJdbi2Test {
-    private AddressDaoJdbi2 dao;
+public class AddressAbstractClassJdbiDaoTest {
+    // cannot use the AddressDao interface in this case as this causes a CGLIB error
+    //private AddressDao dao;
+    private AddressAbstractClassJdbiDao dao;
 
     @Before
     public void setUp() {
-        JdbiHelper jdbiHelper = new JdbiHelper();
-        jdbiHelper.resetTable(AddressDaoJdbi.tableName, AddressDaoJdbi.createAddressTableSql_postgres);
-        dao = jdbiHelper.getDBI().onDemand(AddressDaoJdbi2.class);
-        //dao = jdbiHelper.getDBI().open().attach(AddressDaoJdbi2.class);
+        new AddressTableCreator().resetTable();
+        dao = new JdbiHelper().getDBI().onDemand(AddressAbstractClassJdbiDao.class);
+        //dao = jdbiHelper.getDBI().open().attach(AddressAbstractClassJdbiDao.class);
         dao.save(new Address("Storgata 22", "0123", "Oslo"));
         dao.save(new Address("Karl Johans gate 10", "0100", "Oslo"));
     }
