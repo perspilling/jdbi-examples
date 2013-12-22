@@ -1,5 +1,5 @@
-A comparison of JDBI and JPA for persistence
---------------------------------------------
+JDBI examples
+-------------
 
-This repo contains some example code used to compare using the JDBI framework and JPA
-for persistence in a Java project.
+This repo contains some example code used to try out using [JDBI](http://jdbi.org) as a persistence framework
+in Java projects.
