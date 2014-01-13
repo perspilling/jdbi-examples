@@ -12,16 +12,16 @@ import static org.junit.Assert.assertTrue;
 /**
  * @author Per Spilling
  */
-public class AddressAbstractClassJdbiDaoTest {
+public class AddressCrudDaoTest {
     // cannot use the AddressDao interface in this case as this causes a CGLIB error
     //private AddressDao dao;
-    private AddressAbstractClassJdbiDao dao;
+    private AddressCrudDao dao;
 
     @Before
     public void setUp() {
         new AddressTableCreator().resetTable();
-        dao = new JdbiHelper().getDBI().onDemand(AddressAbstractClassJdbiDao.class);
-        //dao = jdbiHelper.getDBI().open().attach(AddressAbstractClassJdbiDao.class);
+        dao = new JdbiHelper().getDBI().onDemand(AddressCrudDao.class);
+        //dao = jdbiHelper.getDBI().open().attach(AddressCrudDao.class);
         dao.save(new Address("Storgata 22", "0123", "Oslo"));
         dao.save(new Address("Karl Johans gate 10", "0100", "Oslo"));
     }

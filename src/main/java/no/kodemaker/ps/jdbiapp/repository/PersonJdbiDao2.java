@@ -20,8 +20,8 @@ import java.util.List;
  */
 public class PersonJdbiDao2 implements PersonDao {
     private PersonAbstractClassDao personAbstractClassDao;
-    private PersonAddressDao personAddressDao;
-    private AddressAbstractClassJdbiDao addressDao;
+    private PersonAddressDao personAddressDao;        // association table
+    private AddressCrudDao addressDao;
 
     public PersonJdbiDao2() {
         init(new JdbiHelper().getDBI());
@@ -30,7 +30,7 @@ public class PersonJdbiDao2 implements PersonDao {
     private void init(DBI dbi) {
         personAbstractClassDao = dbi.onDemand(PersonAbstractClassDao.class);
         personAddressDao = dbi.onDemand(PersonAddressDao.class);
-        addressDao = dbi.onDemand(AddressAbstractClassJdbiDao.class);
+        addressDao = dbi.onDemand(AddressCrudDao.class);
     }
 
     @Override

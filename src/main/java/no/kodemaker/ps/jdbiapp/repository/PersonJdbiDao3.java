@@ -6,10 +6,12 @@ import no.kodemaker.ps.jdbiapp.repository.jdbi.JdbiHelper;
 import no.kodemaker.ps.jdbiapp.repository.mappers.ExistsMapper;
 import no.kodemaker.ps.jdbiapp.repository.mappers.PersonAddressMapper;
 import no.kodemaker.ps.jdbiapp.repository.mappers.PersonMapper;
+import no.kodemaker.ps.jdbiapp.repository.mappers.PersonWithAddressMapper;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.sqlobject.*;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -21,7 +23,7 @@ import java.util.List;
 public class PersonJdbiDao3 implements PersonDao {
     private PersonDao personDao;
     private PersonAddressDao personAddressDao;     // association table
-    private AddressAbstractClassJdbiDao addressDao;
+    private AddressCrudDao addressDao;
 
     public PersonJdbiDao3() {
         init(new JdbiHelper().getDBI());
@@ -30,7 +32,7 @@ public class PersonJdbiDao3 implements PersonDao {
     private void init(DBI dbi) {
         personDao = dbi.onDemand(PersonDao.class);
         personAddressDao = dbi.onDemand(PersonAddressDao.class);
-        addressDao = dbi.onDemand(AddressAbstractClassJdbiDao.class);
+        addressDao = dbi.onDemand(AddressCrudDao.class);
     }
 
     @Override
@@ -55,11 +57,7 @@ public class PersonJdbiDao3 implements PersonDao {
 
     private Person getPersonWithAddress(Person person) {
         if (person == null) return null;
-        List<PersonAddressAssoc> personAddressAssocList = personAddressDao.findByPersonId(person.getId());
-        if (personAddressAssocList.size() == 1) {
-            person.setHomeAddress(addressDao.get(personAddressAssocList.get(0).getAddressId()));
-        }
-        return person;
+        return personDao.getWithAddress(person.getId());
     }
 
     private List<Person> getPersonsWithAddress(List<Person> persons) {
@@ -130,7 +128,6 @@ public class PersonJdbiDao3 implements PersonDao {
     /**
      * Internal Person JDBI dao.
      */
-    @RegisterMapper(PersonMapper.class)
     interface PersonDao {
 
         @SqlUpdate("insert into PERSON (name, email, phone) values (:p.name, :p.emailVal, :p.phone)")
@@ -147,15 +144,37 @@ public class PersonJdbiDao3 implements PersonDao {
         public abstract boolean exists(Long id);
 
         @SqlQuery("select * from PERSON where personId = :id")
+        @RegisterMapper(PersonMapper.class)
         public abstract Person get(@Bind("id") Long id);
 
-        @SqlQuery("select * from PERSON where name like :name")
+        // Using outer join here as the address is optional. If no address is found, then inner join would return null
+        @SqlQuery("select p.personid, p.name, p.email, p.phone, a.addressid, a.streetaddress, a.postalcode, a.postalplace"+
+                "         FROM person as p "+
+                "         LEFT OUTER JOIN person_address as pa"+
+                "         ON p.personid = pa.personid "+
+                "         LEFT OUTER JOIN address as a"+
+                "         on pa.addressid = a.addressid"+
+                "         where p.personid = :id")
+        @RegisterMapper(PersonWithAddressMapper.class)
+        public abstract Person getWithAddress(@Bind("id") Long id);
+
+        //@SqlQuery("select * from PERSON where name like :name")
+        @SqlQuery("select p.personid, p.name, p.email, p.phone, a.addressid, a.streetaddress, a.postalcode, a.postalplace"+
+                "         FROM person as p "+
+                "         LEFT OUTER JOIN person_address as pa"+
+                "         ON p.personid = pa.personid "+
+                "         LEFT OUTER JOIN address as a"+
+                "         on pa.addressid = a.addressid"+
+                "         where p.name like :name")
+        @RegisterMapper(PersonWithAddressMapper.class)
         public abstract List<Person> findByName(@Bind("name") String name);
 
         @SqlQuery("select * from PERSON where email like :email")
+        @RegisterMapper(PersonMapper.class)
         public abstract List<Person> findByEmail(@Bind("email") String email);
 
         @SqlQuery("select * from PERSON")
+        @RegisterMapper(PersonMapper.class)
         public abstract List<Person> getAll();
 
         @SqlUpdate("delete from PERSON where personId = :id")

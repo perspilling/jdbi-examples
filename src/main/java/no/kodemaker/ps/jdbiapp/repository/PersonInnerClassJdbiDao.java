@@ -23,7 +23,7 @@ import java.util.List;
 public class PersonInnerClassJdbiDao implements PersonDao {
     private PersonDao personDao;
     private PersonAddressDao personAddressDao;
-    private AddressAbstractClassJdbiDao addressDao;
+    private AddressCrudDao addressDao;
     private JdbiHelper jdbiHelper;
 
     public PersonInnerClassJdbiDao() {
@@ -41,7 +41,7 @@ public class PersonInnerClassJdbiDao implements PersonDao {
     private void init(DBI dbi) {
         personDao = dbi.onDemand(PersonDao.class);
         personAddressDao = dbi.onDemand(PersonAddressDao.class);
-        addressDao = dbi.onDemand(AddressAbstractClassJdbiDao.class);
+        addressDao = dbi.onDemand(AddressCrudDao.class);
     }
 
     public void createTable() {

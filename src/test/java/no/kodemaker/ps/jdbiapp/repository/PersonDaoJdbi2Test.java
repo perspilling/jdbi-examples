@@ -20,7 +20,7 @@ public class PersonDaoJdbi2Test {
 
     private static PersonJdbiDao2 personDao;
     // cannot use the AddressDao interface in this case as this causes a CGLIB error
-    private static AddressAbstractClassJdbiDao addressDao;
+    private static AddressCrudDao addressDao;
 
     @BeforeClass
     public static void init() {
@@ -28,7 +28,7 @@ public class PersonDaoJdbi2Test {
         new PersonTableCreator().resetTable();
         new PersonAddressTableCreator().resetTable();
         personDao = new PersonJdbiDao2();
-        addressDao = new JdbiHelper().getDBI().onDemand(AddressAbstractClassJdbiDao.class);
+        addressDao = new JdbiHelper().getDBI().onDemand(AddressCrudDao.class);
         DbSeeder.initPersonTable(personDao);
     }
 

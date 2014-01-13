@@ -12,7 +12,7 @@ import java.util.List;
  * @author Per Spilling
  */
 @RegisterMapper(AddressMapper.class)
-public abstract class AddressAbstractClassJdbiDao implements AddressDao {
+public abstract class AddressCrudDao implements AddressDao {
 
     @Override
     @SqlQuery("select * from ADDRESS where addressId = :id")

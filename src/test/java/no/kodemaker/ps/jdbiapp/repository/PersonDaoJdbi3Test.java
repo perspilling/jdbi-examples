@@ -19,7 +19,6 @@ public class PersonDaoJdbi3Test {
 
     private static PersonJdbiDao3 personDao;
     // cannot use the AddressDao interface in this case as this causes a CGLIB error
-    //private static AddressAbstractClassJdbiDao addressDao;
     private static AddressInnerClassJdbiDao addressDao;
 
     @BeforeClass
@@ -78,7 +77,8 @@ public class PersonDaoJdbi3Test {
 
     @Test
     public void testDependentHomeAddress() {
-        Person person = personDao.findByName("Per Spilling").get(0);
+        //Person person = personDao.findByName("Per Spilling").get(0);
+        Person person = personDao.get(1L);
         assertThat(person.getHomeAddress(), notNullValue());
         person.getHomeAddress().setPostalPlace("Oslo");
         Person p = personDao.save(person);
@@ -89,6 +89,7 @@ public class PersonDaoJdbi3Test {
     public void testFinders() {
         List<Person> persons = personDao.findByName("Per%");
         assertThat(persons.size(), equalTo(2));
+        assertThat(persons.get(0).getHomeAddress(), notNullValue());
 
         persons = personDao.findByName("Per Spilling");
         assertThat(persons.size(), equalTo(1));
