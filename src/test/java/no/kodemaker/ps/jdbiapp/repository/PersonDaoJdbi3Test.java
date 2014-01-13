@@ -15,10 +15,12 @@ import static org.junit.Assert.*;
 /**
  * @author Per Spilling
  */
-public class PersonDaoJdbiTest {
+public class PersonDaoJdbi3Test {
 
-    private static PersonInnerClassJdbiDao personDao = new PersonInnerClassJdbiDao();
-    private static AddressInnerClassJdbiDao addressDao = new AddressInnerClassJdbiDao();
+    private static PersonJdbiDao3 personDao;
+    // cannot use the AddressDao interface in this case as this causes a CGLIB error
+    //private static AddressAbstractClassJdbiDao addressDao;
+    private static AddressInnerClassJdbiDao addressDao;
 
     @BeforeClass
     public static void init() {
@@ -26,6 +28,8 @@ public class PersonDaoJdbiTest {
         new PersonTableCreator().resetTable();
         new PersonAddressTableCreator().resetTable();
 
+        personDao = new PersonJdbiDao3();
+        addressDao = new AddressInnerClassJdbiDao();
         DbSeeder.initPersonTable(personDao);
     }
 

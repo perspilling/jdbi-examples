@@ -2,6 +2,7 @@ package no.kodemaker.ps.jdbiapp.repository.innerclass;
 
 import no.kodemaker.ps.jdbiapp.domain.Address;
 import no.kodemaker.ps.jdbiapp.repository.AddressDao;
+import no.kodemaker.ps.jdbiapp.repository.AddressInnerClassJdbiDao;
 import no.kodemaker.ps.jdbiapp.repository.AddressTableCreator;
 import org.junit.Before;
 import org.junit.Test;

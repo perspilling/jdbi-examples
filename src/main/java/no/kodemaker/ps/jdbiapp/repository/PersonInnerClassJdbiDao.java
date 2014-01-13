@@ -1,13 +1,11 @@
-package no.kodemaker.ps.jdbiapp.repository.innerclass;
+package no.kodemaker.ps.jdbiapp.repository;
 
 import no.kodemaker.ps.jdbiapp.domain.Address;
 import no.kodemaker.ps.jdbiapp.domain.Person;
-import no.kodemaker.ps.jdbiapp.repository.PersonAddressAssoc;
-import no.kodemaker.ps.jdbiapp.repository.PersonAddressMapper;
-import no.kodemaker.ps.jdbiapp.repository.PersonDao;
-import no.kodemaker.ps.jdbiapp.repository.PersonMapper;
 import no.kodemaker.ps.jdbiapp.repository.jdbi.JdbiHelper;
 import no.kodemaker.ps.jdbiapp.repository.jdbi.SpringDBIFactoryBean;
+import no.kodemaker.ps.jdbiapp.repository.mappers.PersonAddressMapper;
+import no.kodemaker.ps.jdbiapp.repository.mappers.PersonMapper;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.sqlobject.*;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
@@ -25,7 +23,7 @@ import java.util.List;
 public class PersonInnerClassJdbiDao implements PersonDao {
     private PersonDao personDao;
     private PersonAddressDao personAddressDao;
-    private AddressInnerClassJdbiDao addressDao;
+    private AddressAbstractClassJdbiDao addressDao;
     private JdbiHelper jdbiHelper;
 
     public PersonInnerClassJdbiDao() {
@@ -43,19 +41,19 @@ public class PersonInnerClassJdbiDao implements PersonDao {
     private void init(DBI dbi) {
         personDao = dbi.onDemand(PersonDao.class);
         personAddressDao = dbi.onDemand(PersonAddressDao.class);
-        addressDao = new AddressInnerClassJdbiDao();
+        addressDao = dbi.onDemand(AddressAbstractClassJdbiDao.class);
     }
 
     public void createTable() {
-        jdbiHelper.createTableIfNotExist(PersonDao.TABLE_NAME, PersonDao.createTableSql_postgres);
-        //addressDao.createTable();
-        jdbiHelper.createTableIfNotExist(PersonAddressDao.TABLE_NAME, PersonAddressDao.createTableSql_postgres);
+        new PersonTableCreator().createTable();
+        new AddressTableCreator().createTable();
+        new PersonAddressTableCreator().createTable();
     }
 
     public void dropTable() {
-        jdbiHelper.dropTableIfExist(PersonAddressDao.TABLE_NAME);
-        jdbiHelper.dropTableIfExist(PersonDao.TABLE_NAME);
-        //addressDao.dropTable();
+        new PersonAddressTableCreator().dropTable();
+        new AddressTableCreator().dropTable();
+        new PersonTableCreator().dropTable();
     }
 
     /**
@@ -155,15 +153,6 @@ public class PersonInnerClassJdbiDao implements PersonDao {
     @RegisterMapper(PersonMapper.class)
     private interface PersonDao extends Transactional<PersonDao> {
 
-        final static String TABLE_NAME = "PERSON";
-
-        final static String createTableSql_postgres =
-                "create table PERSON (" +
-                        "personId serial PRIMARY KEY, " +
-                        "name varchar(80) NOT NULL, " +
-                        "email varchar(80), " +
-                        "phone varchar(20))";
-
         @SqlUpdate("insert into PERSON (name, email, phone) values (:p.name, :p.emailVal, :p.phone)")
         @GetGeneratedKeys
         long insert(@BindBean("p") Person person);
@@ -192,14 +181,6 @@ public class PersonInnerClassJdbiDao implements PersonDao {
      */
     @RegisterMapper(PersonAddressMapper.class)
     interface PersonAddressDao extends Transactional<PersonAddressDao> {
-
-        final static String TABLE_NAME = "PERSON_ADDRESS";
-
-        final static String createTableSql_postgres =
-                "create table PERSON_ADDRESS (" +
-                        "personId integer REFERENCES PERSON, " +
-                        "addressId integer REFERENCES ADDRESS, " +
-                        "PRIMARY KEY (personId, addressId) )";
 
         @SqlUpdate("insert into PERSON_ADDRESS (personId, addressId) values (:pa.personId, :pa.addressId)")
         @GetGeneratedKeys

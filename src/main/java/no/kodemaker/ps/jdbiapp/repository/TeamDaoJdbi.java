@@ -2,8 +2,9 @@ package no.kodemaker.ps.jdbiapp.repository;
 
 import no.kodemaker.ps.jdbiapp.domain.Person;
 import no.kodemaker.ps.jdbiapp.domain.Team;
-import no.kodemaker.ps.jdbiapp.repository.innerclass.PersonInnerClassJdbiDao;
 import no.kodemaker.ps.jdbiapp.repository.jdbi.JdbiHelper;
+import no.kodemaker.ps.jdbiapp.repository.mappers.TeamMapper;
+import no.kodemaker.ps.jdbiapp.repository.mappers.TeamPersonMapper;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.TransactionCallback;

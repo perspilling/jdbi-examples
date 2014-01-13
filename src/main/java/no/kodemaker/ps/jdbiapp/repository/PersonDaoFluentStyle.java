@@ -1,8 +1,7 @@
 package no.kodemaker.ps.jdbiapp.repository;
 
 import no.kodemaker.ps.jdbiapp.domain.Person;
-import no.kodemaker.ps.jdbiapp.repository.innerclass.PersonInnerClassJdbiDao;
-import no.kodemaker.ps.jdbiapp.repository.jdbi.TableCreator;
+import no.kodemaker.ps.jdbiapp.repository.mappers.PersonMapper;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.util.LongMapper;
@@ -14,38 +13,19 @@ import java.util.List;
  *
  * @author Per Spilling
  */
-public class PersonDaoFluentStyle implements PersonDao, TableCreator {
+public class PersonDaoFluentStyle implements PersonDao {
 
     private DBI dbi;
-    private PersonInnerClassJdbiDao personInnerClassJdbiDao;
 
     public PersonDaoFluentStyle(DBI dbi) {
         this.dbi = dbi;
-        this.personInnerClassJdbiDao = new PersonInnerClassJdbiDao();
-
-    }
-
-    @Override
-    public void resetTable() {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public void createTable() {
-        personInnerClassJdbiDao.createTable();
-    }
-
-    @Override
-    public void dropTable() {
-        personInnerClassJdbiDao.dropTable();
     }
 
     @Override
     public Person get(Long id) {
         Person person;
         try (Handle h = dbi.open()) {
-            person = h.createQuery("select * from PERSON where personId" +
-                    " = :id").bind("id", id)
+            person = h.createQuery("select * from PERSON where personId = :id").bind("id", id)
                     .map(PersonMapper.INSTANCE)
                     .first();
         }

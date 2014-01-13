@@ -1,7 +1,6 @@
-package no.kodemaker.ps.jdbiapp.repository.abstractclass;
+package no.kodemaker.ps.jdbiapp.repository;
 
 import no.kodemaker.ps.jdbiapp.domain.Address;
-import no.kodemaker.ps.jdbiapp.repository.AddressTableCreator;
 import no.kodemaker.ps.jdbiapp.repository.jdbi.JdbiHelper;
 import org.junit.Before;
 import org.junit.Test;

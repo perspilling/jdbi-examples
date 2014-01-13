@@ -23,8 +23,7 @@ public class PersonDaoFluentStyleTest {
     @BeforeClass
     public static void initDb() {
         dao = new PersonDaoFluentStyle(new JdbiHelper().getDBI());
-        dao.dropTable();
-        dao.createTable();
+        new PersonTableCreator().resetTable();
         DbSeeder.initPersonTable(dao);
     }
 

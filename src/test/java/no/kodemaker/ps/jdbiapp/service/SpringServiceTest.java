@@ -3,7 +3,7 @@ package no.kodemaker.ps.jdbiapp.service;
 import no.kodemaker.ps.jdbiapp.domain.Person;
 import no.kodemaker.ps.jdbiapp.repository.DbSeeder;
 import no.kodemaker.ps.jdbiapp.repository.PersonDao;
-import no.kodemaker.ps.jdbiapp.repository.innerclass.PersonInnerClassJdbiDao;
+import no.kodemaker.ps.jdbiapp.repository.PersonInnerClassJdbiDao;
 
 import org.junit.BeforeClass;
 import org.junit.Ignore;

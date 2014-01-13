@@ -3,6 +3,7 @@ package no.kodemaker.ps.jdbiapp.repository;
 import no.kodemaker.ps.jdbiapp.domain.Address;
 import no.kodemaker.ps.jdbiapp.domain.Email;
 import no.kodemaker.ps.jdbiapp.domain.Person;
+import no.kodemaker.ps.jdbiapp.repository.jdbi.JdbiHelper;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -15,17 +16,19 @@ import static org.junit.Assert.*;
 /**
  * @author Per Spilling
  */
-public class PersonDaoJdbiTest {
+public class PersonDaoJdbi2Test {
 
-    private static PersonInnerClassJdbiDao personDao = new PersonInnerClassJdbiDao();
-    private static AddressInnerClassJdbiDao addressDao = new AddressInnerClassJdbiDao();
+    private static PersonJdbiDao2 personDao;
+    // cannot use the AddressDao interface in this case as this causes a CGLIB error
+    private static AddressAbstractClassJdbiDao addressDao;
 
     @BeforeClass
     public static void init() {
         new AddressTableCreator().resetTable();
         new PersonTableCreator().resetTable();
         new PersonAddressTableCreator().resetTable();
-
+        personDao = new PersonJdbiDao2();
+        addressDao = new JdbiHelper().getDBI().onDemand(AddressAbstractClassJdbiDao.class);
         DbSeeder.initPersonTable(personDao);
     }
 

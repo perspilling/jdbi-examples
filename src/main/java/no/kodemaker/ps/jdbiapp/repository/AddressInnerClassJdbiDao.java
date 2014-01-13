@@ -1,10 +1,9 @@
-package no.kodemaker.ps.jdbiapp.repository.innerclass;
+package no.kodemaker.ps.jdbiapp.repository;
 
 import no.kodemaker.ps.jdbiapp.domain.Address;
-import no.kodemaker.ps.jdbiapp.repository.AddressDao;
-import no.kodemaker.ps.jdbiapp.repository.AddressMapper;
-import no.kodemaker.ps.jdbiapp.repository.ExistsMapper;
 import no.kodemaker.ps.jdbiapp.repository.jdbi.JdbiHelper;
+import no.kodemaker.ps.jdbiapp.repository.mappers.AddressMapper;
+import no.kodemaker.ps.jdbiapp.repository.mappers.ExistsMapper;
 import org.skife.jdbi.v2.sqlobject.*;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
 import org.skife.jdbi.v2.sqlobject.mixins.Transactional;

@@ -1,8 +1,9 @@
-package no.kodemaker.ps.jdbiapp.repository;
+package no.kodemaker.ps.jdbiapp.repository.mappers;
 
 import no.kodemaker.ps.jdbiapp.domain.Person;
 import no.kodemaker.ps.jdbiapp.domain.Team;
-import no.kodemaker.ps.jdbiapp.repository.innerclass.PersonInnerClassJdbiDao;
+import no.kodemaker.ps.jdbiapp.repository.PersonDao;
+import no.kodemaker.ps.jdbiapp.repository.PersonInnerClassJdbiDao;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
 

@@ -1,4 +1,4 @@
-package no.kodemaker.ps.jdbiapp.repository;
+package no.kodemaker.ps.jdbiapp.repository.mappers;
 
 import no.kodemaker.ps.jdbiapp.domain.Address;
 import org.skife.jdbi.v2.StatementContext;
