@@ -6,6 +6,7 @@ import no.kodemaker.ps.jdbiapp.domain.Person;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.util.Iterator;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -18,7 +19,7 @@ import static org.junit.Assert.*;
 public class PersonDaoJdbi3Test {
 
     private static PersonJdbiDao3 personDao;
-    // cannot use the AddressDao interface in this case as this causes a CGLIB error
+    // cannot use the AddressDao interface as a reference in this case as this causes a CGLIB error
     private static AddressInnerClassJdbiDao addressDao;
 
     @BeforeClass
@@ -71,8 +72,13 @@ public class PersonDaoJdbi3Test {
 
     @Test
     public void retrieveAll() {
-        List<Person> persons = personDao.getAll();
-        assertTrue(persons.size() >= 5);
+        Iterator<Person> persons = personDao.getAll();
+        int count = 0;
+        while (persons.hasNext()) {
+            count++;
+            persons.next();
+        }
+        assertTrue(count >= 5);
     }
 
     @Test
@@ -100,25 +106,21 @@ public class PersonDaoJdbi3Test {
 
     @Test
     public void testDelete() {
-        List<Person> persons = personDao.getAll();
-        int size = persons.size();
+        int size = personDao.count();
 
         Person p = personDao.save(new Person("John Doe", new Email("john@mail.com")));
-        persons = personDao.getAll();
-        assertThat(persons.size(), equalTo(size + 1));
+        assertThat(personDao.count(), equalTo(size + 1));
 
         personDao.delete(p.getId());
-        persons = personDao.getAll();
-        assertThat(persons.size(), equalTo(size));
+        assertThat(personDao.count(), equalTo(size));
     }
 
     @Test
     public void testUpdate() {
-        List<Person> persons = personDao.getAll();
-        Person person = persons.get(0);
+        Person person = personDao.get(1L);
         person.setPhone("12345678");
         personDao.save(person);
-        Person updatedPerson = personDao.get(person.getId());
+        Person updatedPerson = personDao.get(1L);
         assertThat(person, equalTo(updatedPerson));
     }
 }

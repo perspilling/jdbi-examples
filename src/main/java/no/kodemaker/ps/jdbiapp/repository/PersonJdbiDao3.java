@@ -5,7 +5,6 @@ import no.kodemaker.ps.jdbiapp.domain.Person;
 import no.kodemaker.ps.jdbiapp.repository.jdbi.JdbiHelper;
 import no.kodemaker.ps.jdbiapp.repository.mappers.ExistsMapper;
 import no.kodemaker.ps.jdbiapp.repository.mappers.PersonAddressMapper;
-import no.kodemaker.ps.jdbiapp.repository.mappers.PersonMapper;
 import no.kodemaker.ps.jdbiapp.repository.mappers.PersonWithAddressMapper;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.sqlobject.*;
@@ -36,37 +35,16 @@ public class PersonJdbiDao3 implements PersonDao {
     }
 
     @Override
-    public List<Person> findByName(String name) {
-        return getPersonsWithAddress(personDao.findByName(name));
-    }
+    public List<Person> findByName(String name) { return personDao.findByName(name); }
 
     @Override
-    public List<Person> findByEmail(String email) {
-        return getPersonsWithAddress(personDao.findByEmail(email));
-    }
+    public List<Person> findByEmail(String email) { return personDao.findByEmail(email); }
+
+    public Iterator<Person> getAll() { return personDao.getAll(); }
+    public int count() { return personDao.count(); }
 
     @Override
-    public List<Person> getAll() {
-        return getPersonsWithAddress(personDao.getAll());
-    }
-
-    @Override
-    public Person get(Long id) {
-        return getPersonWithAddress(personDao.get(id));
-    }
-
-    private Person getPersonWithAddress(Person person) {
-        if (person == null) return null;
-        return personDao.getWithAddress(person.getId());
-    }
-
-    private List<Person> getPersonsWithAddress(List<Person> persons) {
-        if (persons == null) return null;
-        for (Person p : persons) {
-            getPersonWithAddress(p);
-        }
-        return persons;
-    }
+    public Person get(Long id) { return personDao.getWithAddress(id); }
 
     @Override
     public boolean exists(Long id) {
@@ -129,6 +107,14 @@ public class PersonJdbiDao3 implements PersonDao {
      * Internal Person JDBI dao.
      */
     interface PersonDao {
+        // Using outer join here as the address is optional. If no address is found, then inner join would return null
+        String personWithAddressBaseQuery =
+                "select p.personid, p.name, p.email, p.phone, a.addressid, a.streetaddress, a.postalcode, a.postalplace"+
+                "         FROM person as p "+
+                "         LEFT OUTER JOIN person_address as pa"+
+                "         ON p.personid = pa.personid "+
+                "         LEFT OUTER JOIN address as a"+
+                "         on pa.addressid = a.addressid ";
 
         @SqlUpdate("insert into PERSON (name, email, phone) values (:p.name, :p.emailVal, :p.phone)")
         @GetGeneratedKeys
@@ -144,38 +130,33 @@ public class PersonJdbiDao3 implements PersonDao {
         public abstract boolean exists(Long id);
 
         @SqlQuery("select * from PERSON where personId = :id")
-        @RegisterMapper(PersonMapper.class)
+        @RegisterMapper(PersonWithAddressMapper.class)
         public abstract Person get(@Bind("id") Long id);
 
-        // Using outer join here as the address is optional. If no address is found, then inner join would return null
-        @SqlQuery("select p.personid, p.name, p.email, p.phone, a.addressid, a.streetaddress, a.postalcode, a.postalplace"+
-                "         FROM person as p "+
-                "         LEFT OUTER JOIN person_address as pa"+
-                "         ON p.personid = pa.personid "+
-                "         LEFT OUTER JOIN address as a"+
-                "         on pa.addressid = a.addressid"+
-                "         where p.personid = :id")
+        @SqlQuery(personWithAddressBaseQuery + "where p.personid = :id")
         @RegisterMapper(PersonWithAddressMapper.class)
         public abstract Person getWithAddress(@Bind("id") Long id);
 
-        //@SqlQuery("select * from PERSON where name like :name")
-        @SqlQuery("select p.personid, p.name, p.email, p.phone, a.addressid, a.streetaddress, a.postalcode, a.postalplace"+
-                "         FROM person as p "+
-                "         LEFT OUTER JOIN person_address as pa"+
-                "         ON p.personid = pa.personid "+
-                "         LEFT OUTER JOIN address as a"+
-                "         on pa.addressid = a.addressid"+
-                "         where p.name like :name")
+        @SqlQuery(personWithAddressBaseQuery + "where p.name like :name")
         @RegisterMapper(PersonWithAddressMapper.class)
         public abstract List<Person> findByName(@Bind("name") String name);
 
-        @SqlQuery("select * from PERSON where email like :email")
-        @RegisterMapper(PersonMapper.class)
+        @SqlQuery(personWithAddressBaseQuery + "where email like :email")
+        @RegisterMapper(PersonWithAddressMapper.class)
         public abstract List<Person> findByEmail(@Bind("email") String email);
 
-        @SqlQuery("select * from PERSON")
-        @RegisterMapper(PersonMapper.class)
-        public abstract List<Person> getAll();
+        /**
+         * Using an Iterator here means that the results will be loaded lazily, one row at a time
+         * when Iterator#next or Iterator#hasNext is called. See
+         * <a href=""http://jdbi.org/sql_object_api_queries/>SQL Object Queries</a> for more details.
+         * @return
+         */
+        @SqlQuery(personWithAddressBaseQuery)
+        @RegisterMapper(PersonWithAddressMapper.class)
+        public abstract Iterator<Person> getAll();
+
+        @SqlQuery("select count(*) from PERSON")
+        public abstract int count();
 
         @SqlUpdate("delete from PERSON where personId = :id")
         @Transaction

@@ -19,7 +19,7 @@ import java.util.List;
  * @author Per Spilling
  */
 public class PersonJdbiDao2 implements PersonDao {
-    private PersonAbstractClassDao personAbstractClassDao;
+    private PersonDao personDao;
     private PersonAddressDao personAddressDao;        // association table
     private AddressCrudDao addressDao;
 
@@ -28,29 +28,33 @@ public class PersonJdbiDao2 implements PersonDao {
     }
 
     private void init(DBI dbi) {
-        personAbstractClassDao = dbi.onDemand(PersonAbstractClassDao.class);
+        personDao = dbi.onDemand(PersonDao.class);
         personAddressDao = dbi.onDemand(PersonAddressDao.class);
         addressDao = dbi.onDemand(AddressCrudDao.class);
     }
 
     @Override
     public List<Person> findByName(String name) {
-        return getPersonsWithAddress(personAbstractClassDao.findByName(name));
+        return getPersonsWithAddress(personDao.findByName(name));
     }
 
     @Override
     public List<Person> findByEmail(String email) {
-        return getPersonsWithAddress(personAbstractClassDao.findByEmail(email));
+        return getPersonsWithAddress(personDao.findByEmail(email));
     }
 
-    @Override
     public List<Person> getAll() {
-        return getPersonsWithAddress(personAbstractClassDao.getAll());
+        return getPersonsWithAddress(personDao.getAll());
     }
 
     @Override
     public Person get(Long id) {
-        return getPersonWithAddress(personAbstractClassDao.get(id));
+        return getPersonWithAddress(personDao.get(id));
+    }
+
+    @Override
+    public int count() {
+        return personDao.count();
     }
 
     private Person getPersonWithAddress(Person person) {
@@ -72,7 +76,7 @@ public class PersonJdbiDao2 implements PersonDao {
 
     @Override
     public boolean exists(Long id) {
-        return personAbstractClassDao.exists(id);
+        return personDao.exists(id);
     }
 
     /**
@@ -84,11 +88,11 @@ public class PersonJdbiDao2 implements PersonDao {
     @Transaction
     public Person save(Person person) {
         if (person.getId() == null) {
-            long personId = personAbstractClassDao.insert(person);
+            long personId = personDao.insert(person);
             insertHomeAddressIfExist(personId, person);
             return get(personId);
         } else {
-            personAbstractClassDao.update(person);
+            personDao.update(person);
             updateHomeAddressIfExist(person);
             return get(person.getId());
         }
@@ -124,43 +128,46 @@ public class PersonJdbiDao2 implements PersonDao {
             personAddressDao.delete(new PersonAddressAssoc(p.getId(), p.getHomeAddress().getId()));
             addressDao.delete(p.getHomeAddress().getId());
         }
-        personAbstractClassDao.delete(id);
+        personDao.delete(id);
     }
 
     /**
      * Internal Person JDBI dao.
      */
     @RegisterMapper(PersonMapper.class)
-    interface PersonAbstractClassDao {
+    interface PersonDao {
 
         @SqlUpdate("insert into PERSON (name, email, phone) values (:p.name, :p.emailVal, :p.phone)")
         @GetGeneratedKeys
         @Transaction
-        public abstract long insert(@BindBean("p") Person person);
+        long insert(@BindBean("p") Person person);
 
         @SqlUpdate("update PERSON set name = :p.name, email = :p.emailVal, phone = :p.phone where personId = :p.id")
         @Transaction
-        public abstract void update(@BindBean("p") Person person);
+        void update(@BindBean("p") Person person);
 
         @SqlQuery("select * from PERSON where personId = :id")
         @RegisterMapper(ExistsMapper.class)
-        public abstract boolean exists(Long id);
+        boolean exists(Long id);
 
         @SqlQuery("select * from PERSON where personId = :id")
-        public abstract Person get(@Bind("id") Long id);
+        Person get(@Bind("id") Long id);
+
+        @SqlQuery("select count(*) from PERSON")
+        int count();
 
         @SqlQuery("select * from PERSON where name like :name")
-        public abstract List<Person> findByName(@Bind("name") String name);
+        List<Person> findByName(@Bind("name") String name);
 
         @SqlQuery("select * from PERSON where email like :email")
-        public abstract List<Person> findByEmail(@Bind("email") String email);
+        List<Person> findByEmail(@Bind("email") String email);
 
         @SqlQuery("select * from PERSON")
-        public abstract List<Person> getAll();
+        List<Person> getAll();
 
         @SqlUpdate("delete from PERSON where personId = :id")
         @Transaction
-        public abstract void delete(@Bind("id") Long id);
+        void delete(@Bind("id") Long id);
     }
 
 

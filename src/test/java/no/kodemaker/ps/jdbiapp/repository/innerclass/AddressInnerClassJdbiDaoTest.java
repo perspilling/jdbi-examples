@@ -34,12 +34,12 @@ public class AddressInnerClassJdbiDaoTest {
     @Test
     public void testMisc() {
         assertTrue(dao.exists(1L));
-        int size = dao.getAll().size();
+        int size = dao.count();
         assertTrue(size >= 2);
         Address a = dao.save(new Address("Alexander Kiellands plass 1", "0123", "Oslo"));
-        assertThat(dao.getAll().size(), equalTo(size + 1));
+        assertThat(dao.count(), equalTo(size + 1));
         dao.delete(a.getId());
-        assertThat(dao.getAll().size(), equalTo(size));
+        assertThat(dao.count(), equalTo(size));
     }
 
 }

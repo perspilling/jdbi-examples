@@ -22,6 +22,10 @@ public class AddressInnerClassJdbiDao implements AddressDao {
     }
 
     @Override
+    public int count() {
+        return addressDao.count();
+    }
+
     public List<Address> getAll() {
         return addressDao.getAll();
     }
@@ -58,6 +62,9 @@ public class AddressInnerClassJdbiDao implements AddressDao {
         @SqlQuery("select * from ADDRESS where addressId = :id")
         @RegisterMapper(ExistsMapper.class)
         public abstract boolean exists(@Bind("id") Long id);
+
+        @SqlQuery("select count(*) from ADDRESS")
+        public abstract int count();
 
         @SqlUpdate("insert into ADDRESS (streetAddress, postalCode, postalPlace) values (:a.streetAddress, :a.postalCode, :a.postalPlace)")
         @GetGeneratedKeys

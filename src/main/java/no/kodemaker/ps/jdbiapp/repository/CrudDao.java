@@ -2,15 +2,15 @@ package no.kodemaker.ps.jdbiapp.repository;
 
 import no.kodemaker.ps.jdbiapp.domain.EntityWithLongId;
 
-import java.util.List;
-
 /**
+ * A generic CRUD interface for DAO's.
+ *
  * @author Per Spilling
  */
 public interface CrudDao<T extends EntityWithLongId> {
-    List<T> getAll();
-
     T get(Long id);
+
+    int count();
 
     boolean exists(Long id);
 

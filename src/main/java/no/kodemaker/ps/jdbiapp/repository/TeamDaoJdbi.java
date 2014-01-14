@@ -191,6 +191,11 @@ public class TeamDaoJdbi implements TeamDao {
         return team;
     }
 
+    @Override
+    public int count() {
+        return teamDao.count();
+    }
+
     private void getTeamMembers(Team team, TeamPersonDao teamPersonDao, PersonDao personDao) {
         List<TeamPerson> teamPersonList = teamPersonDao.findByTeamId(team.getId());
         for (TeamPerson tp : teamPersonList) {
@@ -208,7 +213,6 @@ public class TeamDaoJdbi implements TeamDao {
         }
     }
 
-    @Override
     public List<Team> getAll() {
         List<Team> teams = teamDao.getAll();
         for (Team t : teams) {
@@ -296,6 +300,9 @@ public class TeamDaoJdbi implements TeamDao {
 
         @SqlQuery("select * from TEAM where teamId = :id")
         abstract Team get(@Bind("id") long id);
+
+        @SqlQuery("select count(*) from TEAM")
+        abstract int count();
 
         @SqlQuery("select * from TEAM where name like :name")
         abstract List<Team> findByName(@Bind("name") String name);

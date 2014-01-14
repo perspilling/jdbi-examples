@@ -31,7 +31,6 @@ public abstract class AddressCrudDao implements AddressDao {
         }
     }
 
-    @Override
     @SqlQuery("select * from ADDRESS")
     public abstract List<Address> getAll();
 

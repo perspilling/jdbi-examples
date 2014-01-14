@@ -45,7 +45,6 @@ public abstract class GenericCrudDaoJdbi<T extends EntityWithLongId> implements 
         jdbiHelper.dropTableIfExist(tableName);
     }
 
-    @Override
     public List<T> getAll() {
         return getDao().getAll();
     }

@@ -4,6 +4,7 @@ import no.kodemaker.ps.jdbiapp.domain.Person;
 import no.kodemaker.ps.jdbiapp.repository.mappers.PersonMapper;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
+import org.skife.jdbi.v2.util.IntegerMapper;
 import org.skife.jdbi.v2.util.LongMapper;
 
 import java.util.List;
@@ -30,6 +31,13 @@ public class PersonDaoFluentStyle implements PersonDao {
                     .first();
         }
         return person;
+    }
+
+    @Override
+    public int count() {
+        try (Handle h = dbi.open()) {
+            return h.createQuery("select count(*) from PERSON").map(IntegerMapper.FIRST).first();
+        }
     }
 
     @Override

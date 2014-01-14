@@ -98,6 +98,11 @@ public class PersonInnerClassJdbiDao implements PersonDao {
         return getPersonWithAddress(personDao.get(id));
     }
 
+    @Override
+    public int count() {
+        return personDao.count();
+    }
+
     private Person getPersonWithAddress(Person person) {
         if (person == null) return null;
         List<PersonAddressAssoc> personAddressAssocList = personAddressDao.findByPersonId(person.getId());
@@ -125,7 +130,6 @@ public class PersonInnerClassJdbiDao implements PersonDao {
         return getPersonsWithAddress(personDao.findByEmail(email));
     }
 
-    @Override
     public List<Person> getAll() {
         return getPersonsWithAddress(personDao.getAll());
     }
@@ -162,6 +166,9 @@ public class PersonInnerClassJdbiDao implements PersonDao {
 
         @SqlQuery("select * from PERSON where personId = :id")
         Person get(@Bind("id") long id);
+
+        @SqlQuery("select count(*) from PERSON")
+        int count();
 
         @SqlQuery("select * from PERSON where name like :name")
         List<Person> findByName(@Bind("name") String name);
