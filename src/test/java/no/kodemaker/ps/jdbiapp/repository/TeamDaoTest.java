@@ -5,29 +5,29 @@ import no.kodemaker.ps.jdbiapp.domain.Person;
 import no.kodemaker.ps.jdbiapp.domain.Team;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.skife.jdbi.v2.exceptions.CallbackFailedException;
 
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 /**
  * @author Per Spilling
  */
 public class TeamDaoTest {
     private static TeamDaoJdbi teamDao;
-    private static PersonInnerClassJdbiDao personDao;
+    private static PersonDao personDao;
 
     @BeforeClass
     public static void initDb() {
-        personDao = new PersonInnerClassJdbiDao();
-        personDao.dropTable();
-        personDao.createTable();
-        DbSeeder.initPersonTable(personDao);
+        new AddressTableCreator().resetTable();
+        new PersonTableCreator().resetTable();
+        new PersonAddressTableCreator().resetTable();
+        new TeamDaoJdbi.TeamPersonTableCreator().resetTable();
+        new TeamDaoJdbi.TeamTableCreator().resetTable();
 
-        teamDao = new TeamDaoJdbi();
-        teamDao.dropTable();
-        teamDao.createTable();
+        personDao = new PersonJdbiDao3();
+        DbSeeder.initPersonTable(personDao);
+        teamDao = new TeamDaoJdbi(personDao);
     }
 
     @Test
@@ -35,14 +35,14 @@ public class TeamDaoTest {
         Team team = createApollo11Team();
         Team savedTeam = teamDao.save(team);
         assertTrue(team.getMembers().size() == savedTeam.getMembers().size());
-        assertTrue(savedTeam.getName().equals("apollo11"));
+        assertTrue(savedTeam.getName().equals("Apollo11"));
         assertTrue(savedTeam.getMembers().size() == 3);
         assertTrue(savedTeam.getId() != null);
     }
 
     private Team createApollo11Team() {
         Person commander = personDao.findByName("Neil Armstrong").get(0);
-        Team team = new Team("apollo11", commander);
+        Team team = new Team("Apollo11", commander);
         team.addMember(commander);
         team.addMember(personDao.findByName("Edwin Aldrin").get(0));
         team.addMember(personDao.findByName("Michael Collins").get(0));
@@ -53,7 +53,7 @@ public class TeamDaoTest {
     @Test
     public void testInsertWithTxAnnotations() {
         Team team = createSuperHeroTeam();
-        Team savedTeam = teamDao.insertWithTxAnnotations(team);
+        Team savedTeam = teamDao.insertWithTxHandle(team);
         assertTrue(team.getMembers().size() == savedTeam.getMembers().size());
         assertTrue(savedTeam.getName().equals("Superheros"));
         assertTrue(savedTeam.getMembers().size() == 3);
@@ -63,33 +63,52 @@ public class TeamDaoTest {
     private Team createSuperHeroTeam() {
         Person commander = personDao.findByName("Superman").get(0);
         Team team = new Team("Superheros", commander);
-        team.addMember(commander);
         team.addMember(personDao.findByName("Spiderman").get(0));
         team.addMember(personDao.findByName("Batman").get(0));
         return team;
     }
 
     @Test
-    public void testFailingTx() {
+    public void testFailingTxWithHandle() {
         // check that the tx fails as expected and that nothing has been inserted
+        Team fail = createFailingTeam();
         try {
-            //teamDao.insertWithTxFailing(createSuperHeroTeam2());
-            teamDao.insertWithTxAnnotationsFailing(createSuperHeroTeam2());
+            teamDao.insertWithTxHandle(fail);
             fail();
         } catch (IllegalStateException e) {
             assertTrue(true);
         }
-        Team t = teamDao.findByName("Superheros2");
+        Team t = teamDao.findByName(fail.getName());
+        assertTrue(t == null);
+    }
+
+    @Test
+    public void testFailingTxWithTxCallback() {
+        // check that the tx fails as expected and that nothing has been inserted
+        Team fail = createFailingTeam();
+        try {
+            teamDao.insertWithTxCallback(fail);
+            fail();
+        } catch (CallbackFailedException e) {
+            /**
+             * The IllegalStateException thrown in the dao is in this case wrapped in a CallbackFailedException
+             */
+            assertTrue(true);
+        }
+        Team t = teamDao.findByName(fail.getName());
         assertTrue(t == null);
     }
 
     private Team createSuperHeroTeam2() {
         Person commander = personDao.findByName("Superman").get(0);
         Team team = new Team("Superheros2", commander);
-        team.addMember(commander);
         team.addMember(personDao.findByName("Spiderman").get(0));
         team.addMember(personDao.findByName("Batman").get(0));
         return team;
+    }
+
+    private Team createFailingTeam() {
+        return new Team("FAIL", personDao.findByName("Gollum").get(0));
     }
 
     @Test

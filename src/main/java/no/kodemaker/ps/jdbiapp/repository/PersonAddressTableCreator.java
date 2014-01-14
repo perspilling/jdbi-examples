@@ -1,5 +1,7 @@
 package no.kodemaker.ps.jdbiapp.repository;
 
+import no.kodemaker.ps.jdbiapp.repository.jdbi.TableCreatorBase;
+
 /**
  * @author Per Spilling
  */

@@ -47,9 +47,10 @@ public class Person extends EntityWithLongId {
         return name;
     }
 
-    public void setName(String name) {
+    public Person setName(String name) {
         validateName(name);
         this.name = name;
+        return this;
     }
 
     public Email getEmail() {
@@ -61,25 +62,26 @@ public class Person extends EntityWithLongId {
     }
 
 
-    public void setEmail(Email email) {
+    public Person setEmail(Email email) {
         validateEmail(email);
         this.email = email;
+        return this;
     }
 
     public String getPhone() {
         return phone;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public Person setPhone(String phone) {
+        this.phone = phone; return this;
     }
 
     public Address getHomeAddress() {
         return homeAddress;
     }
 
-    public void setHomeAddress(Address homeAddress) {
-        this.homeAddress = homeAddress;
+    public Person setHomeAddress(Address homeAddress) {
+        this.homeAddress = homeAddress; return this;
     }
 
     @Override

@@ -1,7 +1,4 @@
-package no.kodemaker.ps.jdbiapp.repository;
-
-import no.kodemaker.ps.jdbiapp.repository.jdbi.JdbiHelper;
-import no.kodemaker.ps.jdbiapp.repository.jdbi.TableCreator;
+package no.kodemaker.ps.jdbiapp.repository.jdbi;
 
 /**
  * @author Per Spilling

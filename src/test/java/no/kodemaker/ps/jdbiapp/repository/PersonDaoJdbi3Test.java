@@ -72,18 +72,18 @@ public class PersonDaoJdbi3Test {
 
     @Test
     public void retrieveAll() {
+        int count = personDao.count();
         Iterator<Person> persons = personDao.getAll();
-        int count = 0;
+        int i = 0;
         while (persons.hasNext()) {
-            count++;
+            i++;
             persons.next();
         }
-        assertTrue(count >= 5);
+        assertTrue(i == count);
     }
 
     @Test
     public void testDependentHomeAddress() {
-        //Person person = personDao.findByName("Per Spilling").get(0);
         Person person = personDao.get(1L);
         assertThat(person.getHomeAddress(), notNullValue());
         person.getHomeAddress().setPostalPlace("Oslo");

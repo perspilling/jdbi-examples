@@ -24,6 +24,7 @@ public class Team extends EntityWithLongId {
     public Team(String name, Person pointOfContact) {
         this.name = name;
         this.pointOfContact = pointOfContact;
+        addMember(pointOfContact);
     }
 
     public Team(Long id, String name) {
@@ -63,6 +64,6 @@ public class Team extends EntityWithLongId {
     }
 
     public void addMember(Person p) {
-        members.add(p);
+        if (!members.contains(p)) members.add(p);
     }
 }

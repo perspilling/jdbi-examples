@@ -41,6 +41,8 @@ public class PersonJdbiDao3 implements PersonDao {
     public List<Person> findByEmail(String email) { return personDao.findByEmail(email); }
 
     public Iterator<Person> getAll() { return personDao.getAll(); }
+
+    @Override
     public int count() { return personDao.count(); }
 
     @Override
