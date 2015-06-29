@@ -4,22 +4,20 @@ import no.kodemaker.ps.jdbiapp.domain.Person;
 import no.kodemaker.ps.jdbiapp.repository.DbSeeder;
 import no.kodemaker.ps.jdbiapp.repository.PersonDao;
 import no.kodemaker.ps.jdbiapp.repository.PersonInnerClassJdbiDao;
-
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import static org.junit.Assert.assertTrue;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
 
+import static org.junit.Assert.assertTrue;
+
 /**
  * @author Per Spilling
  */
-@Ignore
 @ContextConfiguration(locations = {"classpath:spring/spring-context.xml"})
 @RunWith(SpringJUnit4ClassRunner.class)
 public class SpringServiceTest {
