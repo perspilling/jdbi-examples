@@ -39,17 +39,14 @@ public abstract class AddressCrudDao implements AddressDao {
     public abstract Address get(@Bind("id") Long id);
 
     @SqlUpdate("insert into ADDRESS (streetAddress, postalCode, postalPlace) values (:a.streetAddress, :a.postalCode, :a.postalPlace)")
-    @Transaction
     @GetGeneratedKeys
     public abstract Long insert(@BindBean("a") Address address);
 
     @SqlUpdate("update ADDRESS set streetAddress = :a.streetAddress, postalCode = :a.postalCode, postalPlace = :a.postalPlace where addressId = :a.id")
-    @Transaction
     @GetGeneratedKeys
     public abstract Long update(@BindBean("a") Address address);
 
     @Override
-    @Transaction
     @SqlUpdate("delete from ADDRESS where addressId = :id")
     public abstract void delete(@Bind("id") Long id);
 }
