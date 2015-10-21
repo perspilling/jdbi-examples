@@ -22,8 +22,8 @@ public class TeamDaoTest {
         new AddressTableCreator().resetTable();
         new PersonTableCreator().resetTable();
         new PersonAddressTableCreator().resetTable();
-        new TeamDaoJdbi.TeamPersonTableCreator().resetTable();
         new TeamDaoJdbi.TeamTableCreator().resetTable();
+        new TeamDaoJdbi.TeamPersonTableCreator().resetTable();
 
         personDao = new PersonJdbiDao3();
         DbSeeder.initPersonTable(personDao);
